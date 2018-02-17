@@ -157,67 +157,68 @@ def insert_data(frame, angle, zxingline, zbarline, cnt_zbar, cnt_zxing, cnt_enh_
     cv2.putText(frame, "Filtred ZBar count:" + str(cnt_enh_zbar), (30, 350), font_face, fontScale=1.8, color=(0, 0, 0))
     return frame
 
-reader = zxing.BarCodeReader()
-mypath = 'E:\\barcodes\\video_data\\'
-onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+if(__name__=="__main__"):
+    reader = zxing.BarCodeReader()
+    mypath = 'E:\\barcodes\\video_data\\'
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
-frame_width = 1920
-frame_height = 1080
-# fourcc = cv2.VideoWriter_fourcc(*'XVID')
-# out = cv2.VideoWriter("output.avi", fourcc, 20.0, (int(frame_width), int(frame_height)))
-for f in onlyfiles:
-    print(f)
-    camera = cv2.VideoCapture(mypath + f)
+    frame_width = 1920
+    frame_height = 1080
+    # fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    # out = cv2.VideoWriter("output.avi", fourcc, 20.0, (int(frame_width), int(frame_height)))
+    for f in onlyfiles:
+        print(f)
+        camera = cv2.VideoCapture(mypath + f)
 
-    cnt = 0
-    cnt_zxing=0
-    cnt_zbar=0
-    cnt_enh_zxing=0
-    cnt_enh_zbar=0
-    zxing_code = ""
-    zbar_code = ""
-    prev_barcode = np.zeros((5, 5))
-    while True:
-        (grabbed, frame) = camera.read()
-        if not grabbed:
-            break
-        found, box = detect_barcode(frame)
-        angle=0
-        if found:
-            [codel1, codel2, code_enh_l1, code_enh_l2] = decode_from_box(frame, box)
+        cnt = 0
+        cnt_zxing=0
+        cnt_zbar=0
+        cnt_enh_zxing=0
+        cnt_enh_zbar=0
+        zxing_code = ""
+        zbar_code = ""
+        prev_barcode = np.zeros((5, 5))
+        while True:
+            (grabbed, frame) = camera.read()
+            if not grabbed:
+                break
+            found, box = detect_barcode(frame)
+            angle=0
+            if found:
+                [codel1, codel2, code_enh_l1, code_enh_l2] = decode_from_box(frame, box)
 
-        if codel1 != "":
-            cnt_zxing += 1
-            if zxing_code == "":
-                zxing_code = codel1
-        if codel2 != "":
-            cnt_zbar += 1
-            if zbar_code == "":
-                zbar_code = codel2
+            if codel1 != "":
+                cnt_zxing += 1
+                if zxing_code == "":
+                    zxing_code = codel1
+            if codel2 != "":
+                cnt_zbar += 1
+                if zbar_code == "":
+                    zbar_code = codel2
 
-        if code_enh_l1 != "":
-            cnt_zxing += 1
+            if code_enh_l1 != "":
+                cnt_zxing += 1
 
-        if code_enh_l2 != "":
-            cnt_enh_zbar += 1
+            if code_enh_l2 != "":
+                cnt_enh_zbar += 1
 
-        frame = insert_data(frame, angle, codel1, codel2, cnt_zbar, cnt_zxing, cnt_enh_zbar, cnt_enh_zxing)
-        # out.write(frame)
+            frame = insert_data(frame, angle, codel1, codel2, cnt_zbar, cnt_zxing, cnt_enh_zbar, cnt_enh_zxing)
+            # out.write(frame)
 
-        if type(box) != int:
-            if len(box) > 0:
-                cv2.drawContours(frame, [box], -1, (0, 255, 0), 2)
-        cv2.imshow("Video", frame)
-        cnt += 1
+            if type(box) != int:
+                if len(box) > 0:
+                    cv2.drawContours(frame, [box], -1, (0, 255, 0), 2)
+            cv2.imshow("Video", frame)
+            cnt += 1
 
-        key = cv2.waitKey(1) & 0xFF
-        # if the 'q' key is pressed, stop the loop
-        if key == ord("q"):
-            break
-    camera.release()
-    print("ZXing:" + str(cnt_zxing) + "\t" + str((100 * cnt_zxing) / cnt) + "\t" + zxing_code)
-    print("ZBar :" + str(cnt_zbar) + "\t" + str((100 * cnt_zbar) / cnt) + "\t" + zbar_code)
-    print("ZXing:" + str(cnt_enh_zxing) + "\t" + str((100 * cnt_zxing) / cnt) + "\t" + zxing_code)
-    print("ZBar :" + str(cnt_enh_zbar) + "\t" + str((100 * cnt_zbar) / cnt) + "\t" + zbar_code)
-# out.release()
-cv2.destroyAllWindows()
+            key = cv2.waitKey(1) & 0xFF
+            # if the 'q' key is pressed, stop the loop
+            if key == ord("q"):
+                break
+        camera.release()
+        print("ZXing:" + str(cnt_zxing) + "\t" + str((100 * cnt_zxing) / cnt) + "\t" + zxing_code)
+        print("ZBar :" + str(cnt_zbar) + "\t" + str((100 * cnt_zbar) / cnt) + "\t" + zbar_code)
+        print("ZXing:" + str(cnt_enh_zxing) + "\t" + str((100 * cnt_zxing) / cnt) + "\t" + zxing_code)
+        print("ZBar :" + str(cnt_enh_zbar) + "\t" + str((100 * cnt_zbar) / cnt) + "\t" + zbar_code)
+    # out.release()
+    cv2.destroyAllWindows()

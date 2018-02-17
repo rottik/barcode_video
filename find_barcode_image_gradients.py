@@ -4,7 +4,10 @@ import argparse
 import cv2
 
 def detect_barcode(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    if (len(image.shape)>2):
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    else:
+        gray = image
 
     # compute the Scharr gradient magnitude representation of the images
     # in both the x and y direction

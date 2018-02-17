@@ -15,7 +15,10 @@ def noisy(image):
 
 def detect_barcode_morp(image):
     # image preprocessing
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    if (len(image.shape)>2):
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    else:
+        gray = image
 
     cv2.imshow("gray",gray)
     blur = cv2.GaussianBlur(gray, (9, 9), 0)
